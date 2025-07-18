@@ -2,11 +2,15 @@
 
 arg="$1"
 
-paths_file="FC_CONFIG_PATH"
+: "${CAB_PATH:=~/.config/cabinet.conf}"
+: "${CAB_BRANCH:=$(git config --get init.defaultBranch)}"
+: "${CAB_REPO):?Error: CAB_REPO is not set}"
+
+paths_file="CAB_PATH"
 
 if [[ ! -f "$paths_file" ]]; then
 	echo "Configuration file not found!"
-	echo "Please generate a config or adjust the path using FC_CONFIG_PATH" 
+	echo "Please generate a config or adjust the path using CAB_PATH" 
 	exit 1
 fi
 
@@ -20,7 +24,7 @@ done
 cd ~
 
 git init
-git remote add origin $FC_REPO
+git remote add origin $CAB_REPO
 
 cd .config
 
@@ -31,15 +35,15 @@ case "$arg" in
 			git add "$path"
 		done
 		git commit
-		git push --set-upstream origin "$FC_DEFAULT_BRANCH"
+		git push --set-upstream origin "$CAB_BRANCH"
 		;;
 	pull)
 		echo "Pulling dotfiles..."
-		git pull origin "$FC_DEFAULT_BRANCH"
+		git pull origin "$CAB_BRANCH"
 
 		for path in "${paths[@]}"; do
 			echo "Pulling $path from remote..."
-			git checkout origin/"$FC_DEFAULT_BRANCH" -- "$path"
+			git checkout origin/"$CAB_BRANCH" -- "$path"
 		done
 		;;
 	--help)
