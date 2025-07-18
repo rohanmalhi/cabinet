@@ -1,5 +1,5 @@
 # cabinet
-cabinet is a __<ins>WIP</ins>__ zero pollution bash utility for syncing dotfiles between Unix systems.
+cabinet is a __<ins>WIP</ins>__ zero pollution bash utility for syncing dotfiles between compatible Unix-like systems.
 
 ## Usage
 ### Configuration
@@ -12,7 +12,7 @@ Variable  | Default value
 `CAB_PATH` | `~/.config/cabinet.conf`
 
 > [!WARNING]
-> If `init.defaultBranch` is not set in git, then CAB_BRANCH must be set
+> If `init.defaultBranch` is not set in git, then `CAB_BRANCH` must be set
 
 The cabinet configuration file, by default at `~/.config/cabinet.conf`, is a plaintext list of files and directories to be synced.
 > [!NOTE]
