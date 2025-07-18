@@ -12,9 +12,9 @@ Variable  | Default value
 `CAB_PATH` | `~/.config/cabinet.conf`
 
 > [!WARNING]
-> If `init.defaultBranch` is not set in git, then FC_DEFAULT_BRANCH must be set
+> If `init.defaultBranch` is not set in git, then CABBRANCH must be set
 
-The cabinet configuration file, by default at ~/.config/cabinet.conf, is a plaintext list of files and directories to be synced.
+The cabinet configuration file, by default at `~/.config/cabinet.conf`, is a plaintext list of files and directories to be synced.
 > [!NOTE]
 > File paths can either be absolute or relative from `~/.config/`
 
