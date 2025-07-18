@@ -1,4 +1,4 @@
-# abinet
+# cabinet
 cabinet is a __<ins>WIP</ins>__ zero pollution bash utility for syncing dotfiles between Unix systems.
 
 ## Usage
