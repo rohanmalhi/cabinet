@@ -1,12 +1,10 @@
-#!/bin/bash
-
 arg="$1"
 
-: "${CAB_PATH:=~/.config/cabinet.conf}"
+: "${CAB_PATH:=/home/rsm/.config/cabinet.conf}"
 : "${CAB_BRANCH:=$(git config --get init.defaultBranch)}"
-: "${CAB_REPO):?Error: CAB_REPO is not set}"
+: "${CAB_REPO:?Error: CAB_REPO is not set}"
 
-paths_file="CAB_PATH"
+paths_file="$CAB_PATH"
 
 if [[ ! -f "$paths_file" ]]; then
 	echo "Configuration file not found!"
@@ -34,6 +32,7 @@ case "$arg" in
 		for path in "${paths[@]}"; do
 			git add "$path"
 		done
+      if (CAB_MSG=="false") 
 		git commit
 		git push --set-upstream origin "$CAB_BRANCH"
 		;;
