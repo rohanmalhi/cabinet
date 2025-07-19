@@ -43,7 +43,7 @@ case "$arg" in
 		for path in "${paths[@]}"; do
          dotgit add "$path"
 		done
-      dotit commit -m "Automated by Cabinet"
+      dotgit commit -m "Automated by Cabinet"
       dotgit push --set-upstream origin "$CAB_BRANCH"
 		;;
 	pull)
