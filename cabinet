@@ -35,7 +35,7 @@ cd "$CAB_DIR"
 dotgit init
 dotgit remote add origin $CAB_REPO
 
-cd .config
+cd "$HOME/.config"
 
 case "$arg" in 
 	push)
