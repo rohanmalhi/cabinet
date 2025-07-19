@@ -44,6 +44,7 @@ case "$arg" in
          dotgit add "$path"
 		done
       dotgit commit -m "Automated by Cabinet"
+      dotgit pull origin main --rebase
       dotgit push --set-upstream origin "$CAB_BRANCH"
 		;;
 	pull)
