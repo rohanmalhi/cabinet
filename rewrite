@@ -45,6 +45,7 @@ case "$cmd" in
       git push --set-upstream origin "$CAB_BRANCH"
       ;;
    pull)
+      git stash
       git pull origin "$CAB_BRANCH"
       for file in "${paths[@]}"; do
          echo "Working on $file"
