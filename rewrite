@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cmd="$1"
-arg="$1"
+arg="$2"
 
 : "${CAB_DIR:=$HOME/.config/cabinet}"
 : "${CAB_CONF:=$CAB_DIR/cabinet.conf}"
