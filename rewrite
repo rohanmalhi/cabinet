@@ -33,8 +33,8 @@ case "$cmd" in
    push)
       echo "Pushing your dotfiles..."
       for file in "${paths[@]}"; do 
-         echo "Syncing $file"
-         cp -r "$HOME/.config/$file" "$CAB_DIR/repo/$file"
+         echo "Pushing $file"
+         sudo cp -r "$HOME/.config/$file" "$CAB_DIR/repo/$file"
          git add $file
       done
 
@@ -45,9 +45,9 @@ case "$cmd" in
    pull)
       git pull origin "$CAB_BRANCH"
       for path in "${paths[@]}"; do
-         echo "Working on $path"
-         cp -r "$HOME/.config/$file" "$CAB_DIR/backup/$file"
-         cp -r "$CAB_DIR/repo/$file" "$HOME/.config/$file"
+         echo "Pulling $path"
+         sudo cp -r "$HOME/.config/$file" "$CAB_DIR/backup/$file"
+         sudo cp -r "$CAB_DIR/repo/$file" "$HOME/.config/$file"
       done
       ;;
    add)
