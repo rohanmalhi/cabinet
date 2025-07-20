@@ -17,6 +17,10 @@ fi
 
 mapfile -t paths < "$paths_file"
 
+mkdir -p "$CAB_DIR"
+mkdir -p "$CAB_DIR/repo"
+mkdir -p "$CAB_DIR/backup"
+
 cd "$CAB_DIR/repo"
 
 case "$cmd" in
