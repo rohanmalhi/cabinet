@@ -15,7 +15,7 @@ if [[ ! -f "$CAB_CONF" ]]; then
    exit 1
 fi 
 
-mapfile -t paths < "$paths_file"
+mapfile -t paths < "$CAB_DIR"
 
 mkdir -p "$CAB_DIR"
 mkdir -p "$CAB_DIR/repo"
