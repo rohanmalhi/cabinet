@@ -14,6 +14,7 @@ init() {
    git init
    git remote add origin "$CAB_REMOTE"
    git branch --set-upstream-to=origin/"$CAB_BRANCH" "$CAB_BRANCH"
+   exit 0
 }
 
 push() {
@@ -28,6 +29,7 @@ push() {
    git commit -m "Sync from $HOSTNAME"
    git pull
    git push --set-upstream origin "$CAB_BRANCH"
+   exit 0
 }
 
 pull() {
@@ -38,6 +40,7 @@ pull() {
       sudo rsync -a --exclude "$CAB_BACKUP" "$HOME/.config/$file" "$CAB_DIR/backup/.config/$file"
       sudo cp -r "$CAB_DIR/repo/.config/$file" "$HOME/.config/$file"
    done
+   exit 0
 }
 
 add() {
@@ -53,6 +56,7 @@ add() {
    fi 
 
    grep -qxF "$arg" "$CAB_CONF" || echo "$arg" >> "$CAB_CONF"
+   exit 0
 }
 
 if [[ ! -f "$CAB_CONF" ]]; then
