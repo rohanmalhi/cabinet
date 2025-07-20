@@ -45,6 +45,7 @@ case "$cmd" in
    pull)
       git pull origin "$CAB_BRANCH"
       for path in "${paths[@]}"; do
+         echo "Working on $path"
          sudo cp "$HOME/.config/$file" "$CAB_DIR/backup/$file"
          sudo cp "$CAB_DIR/repo/$file" "$HOME/.config/$file"
       done
