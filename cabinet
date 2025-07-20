@@ -1,63 +1,74 @@
 #!/bin/bash
 
-arg="$1"
+cmd="$1"
+arg="$2"
 
 : "${CAB_DIR:=$HOME/.config/cabinet}"
 : "${CAB_CONF:=$CAB_DIR/cabinet.conf}"
 : "${CAB_BRANCH:=$(git config --get init.defaultBranch)}"
-: "${CAB_REPO:?Error: CAB_REPO is not set}"
+: "${CAB_REMOTE:?Error: CAB_REPO is not set}"
 : "${CAB_BACKUP:=$CAB_DIR/backup}"
 
-dotgit() {
-   git --git-dir="$CAB_DIR/git" --work-tree="$HOME" "$@"
-}
+if [[ ! -f "$CAB_CONF" ]]; then
+   echo "Configuration not found!"
+   echo "Please generate a config or adjust the path using CAB_CONF or CAB_DIR"
+   exit 1
+fi 
 
-paths_file="$CAB_CONF"
+mapfile -t paths < "$CAB_CONF"
 
 mkdir -p "$CAB_DIR"
-mkdir -p "$CAB_BACKUP"
+mkdir -p "$CAB_DIR/repo"
+mkdir -p "$CAB_DIR/backup"
+mkdir -p "$CAB_DIR/repo/.config"
+mkdir -p "$CAB_DIR/backup/.config"
 
-if [[ ! -f "$paths_file" ]]; then
-	echo "Configuration file not found!"
-	echo "Please generate a config or adjust the path using CAB_CONF or CAB_DIR" 
-	exit 1
-fi
+cd "$CAB_DIR/repo"
 
-mapfile -t paths < "$paths_file"
+case "$cmd" in
+   init)
+      cd "$CAB_DIR/repo"
+      git init
+      git remote add origin "$CAB_REMOTE"
+      git branch --set-upstream-to=origin/"$CAB_BRANCH" "$CAB_BRANCH"
+      ;;
+   push)
+      cd "$CAB_DIR/repo/.config"
+      echo "Pushing your dotfiles..."
+      for file in "${paths[@]}"; do 
+         echo "Syncing $file"
+         sudo rsync -a --exclude "$CAB_REPO" "$HOME/.config/$file" "$CAB_DIR/repo/.config/$file"
+         git add $file
+      done
 
-echo "Files to sync:"
-for path in "${paths[@]}"; do
-	echo "$path"
-done
+      git commit -m "Sync from $HOSTNAME"
+      git pull
+      git push --set-upstream origin "$CAB_BRANCH"
+      ;;
+   pull)
+      git stash
+      git pull origin "$CAB_BRANCH"
+      for file in "${paths[@]}"; do
+         echo "Working on $file"
+         sudo rsync -a --exclude "$CAB_BACKUP" "$HOME/.config/$file" "$CAB_DIR/backup/.config/$file"
+         sudo cp -r "$CAB_DIR/repo/.config/$file" "$HOME/.config/$file"
+      done
+      ;;
+   add)
+      if [ -z "$arg" ]; then
+         echo "Usage: $0 add <relative/path/to/file>"
+         exit 1
+      fi 
+      
+      if [ ! -f "$HOME?.config/$arg" ]; then
+         echo "File not found: $arg"
+         echo "Note: file paths should be relative to $HOME/.config"
+         exit 1
+      fi 
 
-cd "$CAB_DIR"
-
-dotgit init
-dotgit remote add origin $CAB_REPO
-
-cd "$HOME/.config"
-
-case "$arg" in 
-	push)
-		echo "Pushing dotfiles..."
-		for path in "${paths[@]}"; do
-         dotgit add "$path"
-		done
-      dotgit commit -m "Automated by Cabinet"
-      #dotgit pull origin main --rebase
-      dotgit push --set-upstream origin "$CAB_BRANCH" --force
-		;;
-	pull)
-		echo "Pulling dotfiles..."
-		
-      dotgit fetch origin "$CAB_BRANCH"
-
-		for path in "${paths[@]}"; do
-			echo "Pulling $path from remote..."
-         dotgit checkout FETCH_HEAD -- "$path"
-		done
-		;;
-	*)
-		echo "Error: unknown argument"
-		;;
+      grep -qxF "$arg" "$CAB_CONF" || echo "$arg" >> "$CAB_CONF"
+      ;;
+   *)
+      echo "Error: unknown argument"
+      ;;
 esac
