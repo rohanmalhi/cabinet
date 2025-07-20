@@ -33,14 +33,15 @@ case "$cmd" in
       git branch --set-upstream-to=origin/"$CAB_BRANCH" "$CAB_BRANCH"
       ;;
    push)
+      cd "$CAB_DIR/repo/.config"
       echo "Pushing your dotfiles..."
       for file in "${paths[@]}"; do 
          echo "Syncing $file"
-         sudo cp -r "$HOME/.config/$file" "$CAB_DIR/repo/.config/$file"
+         sudo rsync -a --exclude "$CAB_REPO" "$HOME/.config/$file" "$CAB_DIR/repo/.config/$file"
          git add $file
       done
 
-      git commit -m `"Sync from $HOSTNAME" '+%d/%m/%Y_%H:%M:%S'`
+      git commit -m "Sync from $HOSTNAME"
       git pull
       git push --set-upstream origin "$CAB_BRANCH"
       ;;
