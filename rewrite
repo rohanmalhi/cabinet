@@ -1,0 +1,65 @@
+#!/bin/bash
+
+cmd="$1"
+arg="$1"
+
+: "${CAB_DIR:=$HOME/.config/cabinet}"
+: "${CAB_CONF:=$CAB_DIR/cabinet.conf}"
+: "${CAB_BRANCH:=$(git config --get init.defaultBranch)}"
+: "${CAB_REMOTE:?Error: CAB_REPO is not set}"
+: "${CAB_BACKUP:=$CAB_DIR/backup}"
+
+if [[ ! -f "$CAB_CONF" ]]; then
+   echo "Configuration not found!"
+   echo "Please generate a config or adjust the path using CAB_CONF or CAB_DIR"
+   exit 1
+fi 
+
+mapfile -t paths < "$paths_file"
+
+cd "$CAB_DIR/repo"
+
+case "$cmd" in
+   init)
+      cd "$CAB_DIR/repo"
+      git init
+      git remote add origin "$CAB_REMOTE"
+      git branch --set-upstream-to="$CAB_REMOTE/$CAB_BRANCH"
+      ;;
+   push)
+      echo "Pushing your dotfiles..."
+      for file in "${paths[@]}"; do 
+         echo "Syncing $file"
+         cp "$HOME/.config/$file" "$CAB_DIR/repo/$file"
+         git add $file
+      done
+
+      git commit -m `"Sync from $HOSTNAME" '+%d/%m/%Y_%H:%M:%S'`
+      git pull
+      git push
+      ;;
+   pull)
+      git pull
+      for path in "${paths[@]}"; do
+         cp "$HOME/.config/$file" "$CAB_DIR/backup/$file"
+         cp "$CAB_DIR/repo/$file" "$HOME/.config/$file"
+      done
+      ;;
+   add)
+      if [ -z "$arg" ]; then
+         echo "Usage: $0 add <relative/path/to/file>"
+         exit 1
+      fi 
+      
+      if [ ! -f "$HOME?.config/$arg" ]; then
+         echo "File not found: $arg"
+         echo "Note: file paths should be relative to $HOME/.config"
+         exit 1
+      fi 
+
+      grep -qxF "$arg" "$CAB_CONF" || echo "$arg" >> "$CAB_CONF"
+      ;;
+   *)
+      echo "Error: unknown argument"
+      ;;
+esac
