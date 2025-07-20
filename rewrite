@@ -20,6 +20,8 @@ mapfile -t paths < "$CAB_CONF"
 mkdir -p "$CAB_DIR"
 mkdir -p "$CAB_DIR/repo"
 mkdir -p "$CAB_DIR/backup"
+mkdir -p "$CAB_DIR/repo/.config"
+mkdir -p "$CAB_DIR/backup/.config"
 
 cd "$CAB_DIR/repo"
 
@@ -34,7 +36,7 @@ case "$cmd" in
       echo "Pushing your dotfiles..."
       for file in "${paths[@]}"; do 
          echo "Syncing $file"
-         sudo cp -r "$HOME/.config/$file" "$CAB_DIR/repo/$file"
+         sudo cp -r "$HOME/.config/$file" "$CAB_DIR/repo/.config/$file"
          git add $file
       done
 
@@ -46,8 +48,8 @@ case "$cmd" in
       git pull origin "$CAB_BRANCH"
       for path in "${paths[@]}"; do
          echo "Working on $path"
-         sudo rsync -a --exclude "$CAB_BACKUP" "$HOME/.config/$file" "$CAB_DIR/backup/$file"
-         sudo cp -r "$CAB_DIR/repo/$file" "$HOME/.config/$file"
+         sudo rsync -a --exclude "$CAB_BACKUP" "$HOME/.config/$file" "$CAB_DIR/backup/.config/$file"
+         sudo cp -r "$CAB_DIR/repo/.config/$file" "$HOME/.config/$file"
       done
       ;;
    add)
