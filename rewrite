@@ -28,6 +28,7 @@ case "$cmd" in
       cd "$CAB_DIR/repo"
       git init
       git remote add origin "$CAB_REMOTE"
+      git branch --set-upstream-to=origin/"$CAB_BRANCH" "$CAB_BRANCH"
       ;;
    push)
       echo "Pushing your dotfiles..."
