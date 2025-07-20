@@ -28,7 +28,6 @@ case "$cmd" in
       cd "$CAB_DIR/repo"
       git init
       git remote add origin "$CAB_REMOTE"
-      git branch --set-upstream-to="$CAB_REMOTE/$CAB_BRANCH"
       ;;
    push)
       echo "Pushing your dotfiles..."
@@ -40,7 +39,7 @@ case "$cmd" in
 
       git commit -m `"Sync from $HOSTNAME" '+%d/%m/%Y_%H:%M:%S'`
       git pull
-      git push
+      git push --set-upstream origin "$CAB_BRANCH"
       ;;
    pull)
       git pull
