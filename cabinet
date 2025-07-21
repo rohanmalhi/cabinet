@@ -1,6 +1,5 @@
 #!/bin/bash
 
-cmd="$1"
 arg="$2"
 
 : "${CAB_DIR:=$HOME/.config/cabinet}"
@@ -10,7 +9,7 @@ arg="$2"
 : "${CAB_BACKUP:=$CAB_DIR/backup}"
 
 init() {
-   cd "$CAB_DIR/repo"
+   cd "$CAB_DIR/repo" || return 1
    git init
    git remote add origin "$CAB_REMOTE"
    git branch --set-upstream-to=origin/"$CAB_BRANCH" "$CAB_BRANCH"
@@ -18,12 +17,12 @@ init() {
 }
 
 push() {
-   cd "$CAB_DIR/repo/.config"
+   cd "$CAB_DIR/repo/.config" || return 1
    echo "Pushing your dotfiles..."
    for file in "${paths[@]}"; do 
       echo "Syncing $file"
       sudo rsync -a --exclude "$CAB_REPO" "$HOME/.config/$file" "$CAB_DIR/repo/.config/$file"
-      git add $file
+      git add "$file"
    done
 
    git commit -m "Sync from $HOSTNAME"
@@ -73,7 +72,7 @@ mkdir -p "$CAB_DIR/backup"
 mkdir -p "$CAB_DIR/repo/.config"
 mkdir -p "$CAB_DIR/backup/.config"
 
-cd "$CAB_DIR/repo"
+cd "$CAB_DIR/repo" || return 1
 
 git_args=()
 
@@ -108,7 +107,7 @@ while [[ $# -gt 0 ]]; do
    esac
 done
 
-if [[ ${#git_args[@]} -gt 0]]; then
+if [[ ${#git_args[@]} -gt 0 ]]; then
    echo "Running in {$CAB_DIR}/repo: ${git_args[*]}"
    (cd "$CAB_DIR/repo" && git "${git_args[@]}")
 else
